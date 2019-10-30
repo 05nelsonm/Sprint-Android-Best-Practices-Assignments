@@ -12,7 +12,8 @@ import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var disposable: Disposable
+    private lateinit var userInputDisposable: Disposable
+    private lateinit var apiCallDisposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +35,14 @@ class MainActivity : AppCompatActivity() {
             calculateMonthlyPayment(PP, DP, IR, LL)
         }
 
-        disposable = obsCombined.observeOn(AndroidSchedulers.mainThread())
+        userInputDisposable = obsCombined.observeOn(AndroidSchedulers.mainThread())
             .subscribe { monthlyPayment -> text_view_output.text = monthlyPayment}
+    }
+
+    override fun onDestroy() {
+        userInputDisposable.dispose()
+        apiCallDisposable.dispose()
+        super.onDestroy()
     }
 
     private fun calculateMonthlyPayment(
@@ -84,4 +91,6 @@ class MainActivity : AppCompatActivity() {
             "Fields are missing input values"
         }
     }
+
+
 }
